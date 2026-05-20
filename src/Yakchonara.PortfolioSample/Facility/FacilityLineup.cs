@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace Yakchonara.PortfolioSample.Facility;
 
 public sealed class FacilityLineup

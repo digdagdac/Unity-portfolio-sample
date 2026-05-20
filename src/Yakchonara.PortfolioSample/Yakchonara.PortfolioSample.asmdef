@@ -1,0 +1,14 @@
+{
+  "name": "Yakchonara.PortfolioSample",
+  "rootNamespace": "Yakchonara.PortfolioSample",
+  "references": [],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": true
+}

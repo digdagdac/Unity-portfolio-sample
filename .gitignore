@@ -1,6 +1,12 @@
 bin/
 obj/
+artifacts/
 .vs/
 .idea/
 *.user
 *.suo
+Library/
+Logs/
+Temp/
+UserSettings/
+.serena/

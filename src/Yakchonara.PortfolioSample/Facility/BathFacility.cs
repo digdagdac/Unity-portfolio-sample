@@ -1,3 +1,4 @@
+using System;
 using Yakchonara.PortfolioSample.Elemental;
 
 namespace Yakchonara.PortfolioSample.Facility;

@@ -1,3 +1,5 @@
+using System;
+
 namespace Yakchonara.PortfolioSample.Elemental;
 
 public sealed class ElementalAgent

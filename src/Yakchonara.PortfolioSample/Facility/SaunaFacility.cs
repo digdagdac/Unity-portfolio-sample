@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Yakchonara.PortfolioSample.Elemental;
 
 namespace Yakchonara.PortfolioSample.Facility;
@@ -16,7 +19,7 @@ public sealed class SaunaFacility : FacilityBase
 
     public void TickHeat(double delta)
     {
-        HeatGauge = Math.Clamp(HeatGauge + delta, 0, 1);
+        HeatGauge = Math.Max(0, Math.Min(1, HeatGauge + delta));
         PublishStateChanged();
     }
 

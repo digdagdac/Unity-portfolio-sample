@@ -1,0 +1,8 @@
+{
+  "name": "com.digdagdac.yakchonara.portfolio-sample",
+  "version": "0.1.0",
+  "displayName": "Yakchonara Portfolio Sample",
+  "description": "Public portfolio sample domain code for the Yakchonara facility, elemental, scene-flow, and UI state examples.",
+  "unity": "6000.0",
+  "type": "library"
+}

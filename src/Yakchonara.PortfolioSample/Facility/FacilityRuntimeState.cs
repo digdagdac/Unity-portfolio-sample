@@ -1,3 +1,5 @@
+using System;
+
 namespace Yakchonara.PortfolioSample.Facility;
 
 public sealed class FacilityRuntimeState
