@@ -1,7 +1,15 @@
 {
   "dependencies": {
     "com.digdagdac.yakchonara.portfolio-sample": "file:../src/Yakchonara.PortfolioSample",
+    "com.unity.2d.animation": "10.2.1",
+    "com.unity.2d.aseprite": "1.1.10",
+    "com.unity.2d.sprite": "1.0.0",
+    "com.unity.2d.tilemap": "1.0.0",
+    "com.unity.feature.cinematic": "1.0.0",
+    "com.unity.inputsystem": "1.14.2",
     "com.unity.multiplayer.center": "1.0.0",
+    "com.unity.render-pipelines.universal": "17.1.0",
+    "com.unity.ugui": "2.0.0",
     "com.unity.modules.accessibility": "1.0.0",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
