@@ -72,11 +72,38 @@ Selector
 2. `Assets/MuloroCombatDemo/Scenes/PortfolioCombatDemo.unity` 를 엽니다.
 3. Play를 누릅니다.
 
-검증 스크립트로 씬 구성을 확인할 수 있습니다.
+Play를 누르면 플레이어가 보스 Belphegor와 전투하는 상태로 시작합니다.
+`PortfolioSinglePlayerBootstrap`이 씬의 플레이어와 보스를 서로 연결하고 카메라를 플레이어에 붙입니다.
+
+| 조작 | 동작 |
+|---|---|
+| 이동 | 플레이어 이동 |
+| 공격 | 보스에게 피해 |
+
+### 씬 상태 검증
+
+Unity 에디터 없이도 씬이 정상인지 확인할 수 있습니다.
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/validate_muloro_combat_demo.ps1
+& "C:\Program Files\Unity\Hub\Editor\6000.0.72f1\Editor\Unity.exe" `
+  -batchmode -nographics -projectPath . `
+  -executeMethod Muloro.Portfolio.EditorTools.PortfolioDemoValidator.Validate `
+  -logFile validate.log
 ```
+
+로그에서 아래를 확인합니다. 종료 코드 0이면 통과입니다.
+
+```
+[VALIDATE] loaded=True
+[VALIDATE] missingScriptCount=0
+[VALIDATE] player=1
+[VALIDATE] boss=1
+[VALIDATE] bootstrap=1
+[VALIDATE] mainCamera=True
+[VALIDATE] RESULT=PASS
+```
+
+검증 코드는 `Assets/MuloroCombatDemo/Editor/PortfolioDemoValidator.cs`입니다.
 
 ### 담당 경계
 

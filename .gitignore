@@ -10,3 +10,9 @@ Logs/
 Temp/
 UserSettings/
 .serena/
+
+# Unity scene/prefab backups produced during local cleanup
+*.unity.bak
+*.unity.bak.meta
+*.prefab.bak
+*.prefab.bak.meta
