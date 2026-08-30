@@ -14,12 +14,24 @@
 
 ## 이 저장소를 3분 안에 보는 방법
 
-| 순서 | 무엇을 | 어디를 |
+이 저장소의 플레이 기준은 **Public 저장소 clone → Unity 6000.0.72f1 → 데모 씬 Play Mode**입니다.
+별도 실행 파일이나 WebGL 빌드는 제공하지 않으며, 최초 실행에는 해당 Unity Editor 설치와 패키지 import가 필요합니다.
+
+| 시간 | 무엇을 | 어디를 |
 |---|---|---|
-| 1 | 담당 범위와 경계 확인 | [CONTRIBUTIONS.md](CONTRIBUTIONS.md) |
-| 2 | 실행되는 보스 전투 확인 | `Assets/MuloroCombatDemo/` |
-| 3 | 아키텍처 코드 확인 | `src/Yakchonara.PortfolioSample/` |
-| 4 | 검토 질문과 답변 방향 | [docs/REVIEW_GUIDE.md](docs/REVIEW_GUIDE.md) |
+| 0:00–0:30 | 담당 범위와 제외 범위 확인 | [CONTRIBUTIONS.md](CONTRIBUTIONS.md) |
+| 0:30–1:30 | 보스 전투를 Editor Play Mode로 확인 | [PortfolioCombatDemo.unity](Assets/MuloroCombatDemo/Scenes/PortfolioCombatDemo.unity) |
+| 1:30–2:30 | 런타임 연결과 보스 의사결정 코드 확인 | [PortfolioSinglePlayerBootstrap.cs](Assets/MuloroCombatDemo/Scripts/Portfolio/PortfolioSinglePlayerBootstrap.cs) → [PortfolioOfflineBoss.cs](Assets/MuloroCombatDemo/Scripts/Portfolio/PortfolioOfflineBoss.cs) |
+| 2:30–3:00 | 순수 C# 씬 수명주기 샘플과 검토 질문 확인 | [SceneFlow](src/Yakchonara.PortfolioSample/SceneFlow/) → [REVIEW_GUIDE.md](docs/REVIEW_GUIDE.md) |
+
+```mermaid
+flowchart LR
+    A["Public 저장소 clone"] --> B["Unity 6000.0.72f1로 열기"]
+    B --> C["PortfolioCombatDemo.unity"]
+    C --> D["Editor Play Mode"]
+    D --> E["전투 동작 확인"]
+    E --> F["Bootstrap → Boss 코드 검토"]
+```
 
 코드 한 파일만 본다면 [PortfolioOfflineBoss.cs](Assets/MuloroCombatDemo/Scripts/Portfolio/PortfolioOfflineBoss.cs)를 권합니다.
 
@@ -34,18 +46,27 @@
 보스에 패턴을 추가할 때마다 기존 상태 판정이 흔들리는 문제를 막는 것이 목표였습니다.
 그래서 우선순위가 높은 상태를 Selector 상단에 고정하고, 하위에서만 공격을 선택하도록 계층을 나눴습니다.
 
+```mermaid
+flowchart TD
+    D{"사망?"} -->|Yes| DEATH["Death 유지"]
+    D -->|No| G{"그로기?"}
+    G -->|Yes| GROGGY["Groggy 유지"]
+    G -->|No| P{"페이즈 변경?"}
+    P -->|Yes| TRANSITION["Phase 전환"]
+    P -->|No| T{"유효한 타깃?"}
+    T -->|No| IDLE["Idle"]
+    T -->|Yes| A{"진행 중 액션?"}
+    A -->|Yes| KEEP["현재 액션 유지"]
+    A -->|No| PHASE["체력 기준 Phase 1 / 2 / 3"]
+    PHASE --> DASH{"대시 조건 충족?"}
+    DASH -->|Yes| DASH_ACTION["전방 / 후방 대시"]
+    DASH -->|No| ATTACK{"공격 범위 + 쿨다운?"}
+    ATTACK -->|Yes| PATTERN["페이즈별 가중치로 패턴 선택"]
+    ATTACK -->|No| MOVE["타깃으로 이동"]
 ```
-Selector
-├─ Dead                     (사망 - 최상위)
-├─ Groggy                   (그로기 상태)
-├─ Phase Change             (체력 구간 전환)
-├─ Active Action            (진행 중 동작 유지)
-├─ Phase Action
-│  ├─ Dash by distance      (거리 조건)
-│  ├─ Attack by weight      (페이즈별 가중치)
-│  └─ Move to target
-└─ Idle
-```
+
+Selector는 위에서 아래 순서로 평가하고, 처음 `Failure`가 아닌 노드의 결과를 사용합니다.
+따라서 사망·그로기·페이즈 전환이 일반 전투 행동보다 항상 먼저 처리됩니다.
 
 ### 페이즈별 공격 가중치
 
@@ -68,21 +89,33 @@ Selector
 
 ### 실행
 
-1. Unity 6.0으로 저장소를 엽니다.
-2. `Assets/MuloroCombatDemo/Scenes/PortfolioCombatDemo.unity` 를 엽니다.
-3. Play를 누릅니다.
+1. Public 저장소를 clone합니다.
+2. Unity Hub에서 **Unity 6000.0.72f1**로 프로젝트 루트를 엽니다.
+3. [PortfolioCombatDemo.unity](Assets/MuloroCombatDemo/Scenes/PortfolioCombatDemo.unity)를 엽니다.
+4. Editor의 Play 버튼을 누릅니다.
 
 Play를 누르면 플레이어가 보스 Belphegor와 전투하는 상태로 시작합니다.
 `PortfolioSinglePlayerBootstrap`이 씬의 플레이어와 보스를 서로 연결하고 카메라를 플레이어에 붙입니다.
 
 | 조작 | 동작 |
 |---|---|
-| 이동 | 플레이어 이동 |
-| 공격 | 보스에게 피해 |
+| `WASD` / 방향키 | 플레이어 이동 |
+| `Space` / 마우스 좌클릭 | 범위 안의 보스 공격 |
+
+```mermaid
+flowchart LR
+    SCENE["PortfolioCombatDemo 씬"] --> BOOT["PortfolioSinglePlayerBootstrap.Awake"]
+    BOOT -->|SetBoss| PLAYER["PortfolioOfflinePlayer"]
+    BOOT -->|SetTarget| BOSS["PortfolioOfflineBoss"]
+    BOOT -->|위치 추적| CAMERA["Camera.main"]
+    PLAYER -->|TakeDamage| BOSS
+    BOSS -->|TakeDamage| PLAYER
+```
 
 ### 씬 상태 검증
 
-Unity 에디터 없이도 씬이 정상인지 확인할 수 있습니다.
+Unity Editor UI를 열지 않고도 `batchmode`로 씬 구성을 검사할 수 있습니다.
+Unity Editor 설치와 유효한 라이선스는 필요하며, 아래 검사는 Play Mode 자체가 아니라 참조·컴포넌트·Build Settings 상태를 확인합니다.
 
 ```powershell
 & "C:\Program Files\Unity\Hub\Editor\6000.0.72f1\Editor\Unity.exe" `
@@ -126,10 +159,17 @@ Unity 의존성을 제거해 `dotnet run` 만으로 흐름을 확인할 수 있�
 
 전환 순서를 한 곳에 모아 해결했습니다.
 
+```mermaid
+flowchart LR
+    A["전환 요청"] --> B["중복 로드 검사"]
+    B --> C["Additive 로드"]
+    C --> D["완료 대기"]
+    D --> E["상태 적용"]
+    E --> F["기존 씬 해제"]
+    F --> G["런타임 정리"]
 ```
-요청 → 중복 로드 검사 → Additive 로드 → 완료 대기
-     → 상태 적용 → 기존 씬 해제 → 정리
-```
+
+더 자세한 상태·시설·UI 흐름은 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)에서 확인할 수 있습니다.
 
 ### 검토 경로
 
